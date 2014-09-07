@@ -12,6 +12,17 @@ func RegisterService(name string, port int, ttl int) {
 	go registerService(name, port, ttl)
 }
 
+func registerCheckTtl(name string, ttl int, agent *consul.Agent) {
+	reg := &consul.AgentCheckRegistration{
+		Name: "foo",
+	}
+	reg.TTL = strconv.Itoa(ttl) + "s"
+
+	if err := agent.CheckRegister(reg); err != nil {
+		log.Error("Failed to register check: ", err)
+	}
+}
+
 //continue to register a service preferably ran in a go routine.
 func registerService(name string, port int, ttl int) {
 
@@ -27,26 +38,32 @@ func registerService(name string, port int, ttl int) {
 	if nil != err {
 		log.Error("Failed to get consul client")
 	}
+	agent := client.Agent()
+
+	serviceRegister(name, port, ttl, agent)
+	registerCheckTtl(name, ttl, agent)
 
 	for {
 		select {
 		case <-reportInterval: //report registration
 			{
+				// serviceRegister(name, port, ttl, agent)
 
-				agent := client.Agent()
-
-				reg := &consul.AgentServiceRegistration{
-					Name: name,
-					Port: port,
-					Check: &consul.AgentServiceCheck{
-						TTL: strconv.Itoa(ttl) + "s",
-					},
-				}
-				if err := agent.ServiceRegister(reg); err != nil {
-					log.Error("err: ", err)
-				}
 			}
 		}
 	}
 
+}
+
+func serviceRegister(name string, port int, ttl int, agent *consul.Agent) {
+	reg := &consul.AgentServiceRegistration{
+		Name: name,
+		Port: port,
+		Check: &consul.AgentServiceCheck{
+			TTL: strconv.Itoa(ttl) + "s",
+		},
+	}
+	if err := agent.ServiceRegister(reg); err != nil {
+		log.Error("err: ", err)
+	}
 }
