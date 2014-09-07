@@ -54,7 +54,7 @@ func registerService(name string, port int, ttl int) {
 }
 
 func servicePassing(name string, agent *consul.Agent) {
-	agent.Pass("service:"+name, "Service up and ready!")
+	agent.PassTTL("service:"+name, "Service up and ready!")
 }
 
 func serviceRegister(name string, port int, ttl int, agent *consul.Agent) {
