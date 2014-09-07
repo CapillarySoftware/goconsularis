@@ -45,12 +45,16 @@ func registerService(name string, port int, ttl int) {
 		select {
 		case <-reportInterval: //report registration
 			{
-				serviceRegister(name, port, ttl, agent)
+				servicePassing(name, agent)
 
 			}
 		}
 	}
 
+}
+
+func servicePassing(name string, agent *consul.Agent) {
+	agent.Pass("service:"+name, "Service up and ready!")
 }
 
 func serviceRegister(name string, port int, ttl int, agent *consul.Agent) {
