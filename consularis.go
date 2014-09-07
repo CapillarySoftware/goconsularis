@@ -47,7 +47,7 @@ func registerService(name string, port int, ttl int) {
 		select {
 		case <-reportInterval: //report registration
 			{
-				// serviceRegister(name, port, ttl, agent)
+				serviceRegister(name, port, ttl, agent)
 
 			}
 		}
