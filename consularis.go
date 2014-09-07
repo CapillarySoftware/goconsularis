@@ -14,7 +14,7 @@ func RegisterService(name string, port int, ttl int) {
 
 func registerCheckTtl(name string, ttl int, agent *consul.Agent) {
 	reg := &consul.AgentCheckRegistration{
-		Name: "foo",
+		Name: name,
 	}
 	reg.TTL = strconv.Itoa(ttl) + "s"
 
@@ -41,8 +41,6 @@ func registerService(name string, port int, ttl int) {
 	agent := client.Agent()
 
 	serviceRegister(name, port, ttl, agent)
-	registerCheckTtl(name, ttl, agent)
-
 	for {
 		select {
 		case <-reportInterval: //report registration
