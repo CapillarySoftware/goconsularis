@@ -36,7 +36,7 @@ func registerService(name string, port int, ttl int) {
 				agent := client.Agent()
 
 				reg := &consul.AgentServiceRegistration{
-					Name: "goforward",
+					Name: name,
 					Port: port,
 					Check: &consul.AgentServiceCheck{
 						TTL: strconv.Itoa(ttl) + "s",
